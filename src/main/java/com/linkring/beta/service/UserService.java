@@ -2,7 +2,6 @@ package com.linkring.beta.service;
 
 import com.linkring.beta.domain.User;
 import com.linkring.beta.repository.UserRepo;
-import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

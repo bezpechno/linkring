@@ -55,11 +55,11 @@ public class AuthController {
         userService.save(user);
         User newuser = userService.getUserByUsername(user.getUsername());
         Optional<BackgroundImage> image = backgroundImageService.findByUsername(newuser);
-        BackgroundImage newImage = image.isPresent()?image.get():new BackgroundImage("",newuser);
+        BackgroundImage newImage = image.orElseGet(() -> new BackgroundImage("", newuser));
         newImage.setUrl("");
         backgroundImageService.save(newImage);
         Optional<DonateAddress> donate_link = DonateAddressService.findByUsername(user);
-        DonateAddress donateAddress = donate_link.isPresent()?donate_link.get():new DonateAddress("", newuser);
+        DonateAddress donateAddress = donate_link.orElseGet(() -> new DonateAddress("", newuser));
         donateAddress.setAddress("");
         DonateAddressService.save(donateAddress);
         return "redirect:/login";
@@ -83,13 +83,12 @@ public class AuthController {
 
 
             Optional<DonateAddress> donate_link = DonateAddressService.findByUsername(user);
-            if (!donate_link.isEmpty()) {
+            if (donate_link.isPresent()) {
                 model.addAttribute("donate_link", donate_link.get());
                 model.addAttribute("donate_link_absolute", "https://www.blockchain.com/btc/address/" + donate_link.get().getAddress());
             }
             Optional<BackgroundImage> background = backgroundImageService.findByUsername(user);
-            if (!background.isEmpty())
-                model.addAttribute("image_url",background.get());
+            background.ifPresent(backgroundImage -> model.addAttribute("image_url", backgroundImage));
             model.addAttribute("url",username);
             model.addAttribute("posts",posts);
             System.out.println(posts);

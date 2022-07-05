@@ -38,8 +38,7 @@ public class BusinessController {
     public String appearanceEditor(@AuthenticationPrincipal User username,Model model){
         User user = userLegacyService.getUserByUsername(username.getUsername());
         Optional<BackgroundImage> image = backgroundImageService.findByUsername(user);
-        if (!image.isEmpty())
-            model.addAttribute("image",image.get());
+        image.ifPresent(backgroundImage -> model.addAttribute("image", backgroundImage));
         model.addAttribute("isActive","nav-link active");
         return("styling");
     }
@@ -52,8 +51,7 @@ public class BusinessController {
         BackgroundImage newImage = image.isPresent()?image.get():new BackgroundImage(url,username);
         newImage.setUrl(url);
         backgroundImageService.save(newImage);
-        if (!image.isEmpty())
-            model.addAttribute("image",image.get());
+        image.ifPresent(backgroundImage -> model.addAttribute("image", backgroundImage));
         return ("styling");
     }
     @GetMapping("/products")
@@ -65,8 +63,7 @@ public class BusinessController {
         User user = userLegacyService.getUserByUsername(username.getUsername());
         System.out.println("Settings> userAuth: " + user.getUsername());
         Optional<Email> mail = emailRepoService.findByUsername(user);
-        if (!mail.isEmpty())
-            model.addAttribute("mail",mail.get());
+        mail.ifPresent(email -> model.addAttribute("mail", email));
         return "settings";
     }
     @PostMapping("/settings")
@@ -76,11 +73,10 @@ public class BusinessController {
         User user = userLegacyService.getUserByUsername(username.getUsername());
 
         Optional<Email> mail = emailRepoService.findByUsername(user);
-        Email newMail = mail.isPresent()?mail.get():new Email(email, username);
+        Email newMail = mail.orElseGet(() -> new Email(email, username));
         newMail.setEmail(email);
         emailRepoService.save(newMail);
-        if (!mail.isEmpty())
-            model.addAttribute("mail",mail.get());
+        mail.ifPresent(value -> model.addAttribute("mail", value));
         return "settings";
     }
 
@@ -90,8 +86,7 @@ public class BusinessController {
     public String moneyMaker(@AuthenticationPrincipal User username,Model model){
         User user = userLegacyService.getUserByUsername(username.getUsername());
         Optional<DonateAddress> donate_link = DonateAddressService.findByUsername(user);
-        if (!donate_link.isEmpty())
-            model.addAttribute("donate_link",donate_link.get());
+        donate_link.ifPresent(address -> model.addAttribute("donate_link", address));
         return "donate";
     }
     @PostMapping("/donate")
@@ -105,11 +100,10 @@ public class BusinessController {
 
         User user = userLegacyService.getUserByUsername(username.getUsername());
         Optional<DonateAddress> donate_link = DonateAddressService.findByUsername(user);
-        DonateAddress donateAddress = donate_link.isPresent()?donate_link.get():new DonateAddress(address, username);
+        DonateAddress donateAddress = donate_link.orElseGet(() -> new DonateAddress(address, username));
         donateAddress.setAddress(address);
         DonateAddressService.save(donateAddress);
-        if (!donate_link.isEmpty())
-            model.addAttribute("donate_link",donate_link.get());
+        donate_link.ifPresent(value -> model.addAttribute("donate_link", value));
         return "donate";
     }
 
