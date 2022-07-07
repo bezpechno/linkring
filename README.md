@@ -1,2 +1,2 @@
 # linkring
-<a href="lilkringe.herokuapp.com">Deployed</a>
+<a href="https://www.lilkringe.herokuapp.com">Deployed</a>
